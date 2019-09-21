@@ -208,22 +208,18 @@ GROUP BY V.[ID cliente],V.[ID empleado],C.[Nombre Cliente],E.Nombre
 Select * from [STAGE].[SCV_VENTA_DETALLE]
 
 /*PROVEEDOR*/
-CREATE TABLE [BUSQUEDA PROVEEDOR] (
-    [ID proveedor] int,
+CREATE TABLE ODS.MD_PROVEEDOR (
+    [ID proveedor] int primary key,
     [NombreCompania] nvarchar(40),
     [NombreContacto] nvarchar(30),
     [TituloContacto] nvarchar(30),
     [City] nvarchar(15),
     [Fecha_Carga] datetime,
     [Flag_Activo] int,
-    [ID Cliente] int,
-    [Nombre Cliente] nvarchar(40),
-    [Nombre contacto] nvarchar(30),
-    [Apellido contacto] nvarchar(30),
-    [Cargo contacto] nvarchar(30),
-    [Ventas año anterior] money
+	[Fecha_Eliminacion] datetime null
 )
-
+Select * from [STAGE].[SCV_PROVEEDOR]
+Select * from ODS.MD_PROVEEDOR
 /*COMPRAS*/
 CREATE TABLE ODS.MD_COMPRA (
 	IdCompra int identity(1,1) PRIMARY KEY,
@@ -272,3 +268,30 @@ CREATE TABLE BDS.DIM_TIEMPO (
 )
 --TRUNCATE TABLE BDS.DIM_TIEMPO
 SELECT * FROM BDS.DIM_TIEMPO
+
+
+CREATE TABLE BDS.DIM_PROVEEDOR (
+    [ID proveedor] int PRIMARY KEY,
+    [NombreCompania] nvarchar(40),
+    [NombreContacto] nvarchar(30),
+    [TituloContacto] nvarchar(30),
+    [City] nvarchar(15),
+    [Fecha_Carga] datetime,
+    [Flag_Activo] int,
+    [Fecha_Eliminacion] datetime
+)
+--TRUNCATE TABLE BDS.DIM_PROVEEDOR
+SELECT * FROM [ODS].[MD_PROVEEDOR]
+SELECT * FROM BDS.DIM_PROVEEDOR
+
+/*DIM PRODUCTO*/
+CREATE TABLE BDS.DIM_PRODUCTO (
+    [ID producto] bigint PRIMARY KEY,
+    [Nombre producto] nvarchar(50),
+    [Nombre tipo producto] nvarchar(50),
+    [Fecha_Carga] datetime,
+    [Flag_Activo] int,
+    [Fecha_Eliminacion] datetime
+)
+SELECT * FROM [ODS].[MD_PRODUCTO]
+SELECT * FROM BDS.DIM_PRODUCTO
