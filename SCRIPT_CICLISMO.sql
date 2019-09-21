@@ -5,6 +5,23 @@
 --TRUNCATE TABLE STAGE.SCV_EMPLEADO;
 --TRUNCATE TABLE STAGE.SCV_VENTA_DETALLE;
 --TRUNCATE TABLE STAGE.SCV_VENTA;
+
+CREATE TABLE Proveedores(
+	[ID proveedor] int IDENTITY(1,1)primary key,
+	NombreCompania nvarchar(40) NOT NULL,
+	NombreContacto nvarchar(30) NULL,
+	TituloContacto nvarchar(30) NULL,
+	Direccion nvarchar(60) NULL,
+	City nvarchar(15) NULL,
+	Region nvarchar(15) NULL,
+	CodigoPostal nvarchar(10) NULL,
+	Pais nvarchar(15) NULL,
+	Telefono nvarchar(24) NULL,
+	Fax nvarchar(24) NULL,
+	SitioWeb ntext NULL
+)
+SELECT * FROM Proveedores
+
 CREATE SCHEMA STAGE;
 CREATE SCHEMA ODS;
 CREATE SCHEMA BDS;
@@ -95,6 +112,22 @@ CREATE TABLE STAGE.SCV_VENTA (
 )
 SELECT * FROM STAGE.SCV_VENTA
 
+CREATE TABLE STAGE.SCV_PROVEEDOR (
+    [ID proveedor] int,
+    [NombreCompania] nvarchar(40),
+    [NombreContacto] nvarchar(30),
+    [TituloContacto] nvarchar(30),
+    [Direccion] nvarchar(60),
+    [City] nvarchar(15),
+    [Region] nvarchar(15),
+    [CodigoPostal] nvarchar(10),
+    [Pais] nvarchar(15),
+    [Telefono] nvarchar(24),
+    [Fax] nvarchar(24),
+    [SitioWeb] nvarchar(max)
+)
+SELECT * FROM STAGE.SCV_PROVEEDOR
+
 --CAPA ODS
 
 CREATE TABLE ODS.MD_CLIENTE (
@@ -173,3 +206,69 @@ ON E.[ID empleado]=V.[ID empleado]
 GROUP BY V.[ID cliente],V.[ID empleado],C.[Nombre Cliente],E.Nombre
 
 Select * from [STAGE].[SCV_VENTA_DETALLE]
+
+/*PROVEEDOR*/
+CREATE TABLE [BUSQUEDA PROVEEDOR] (
+    [ID proveedor] int,
+    [NombreCompania] nvarchar(40),
+    [NombreContacto] nvarchar(30),
+    [TituloContacto] nvarchar(30),
+    [City] nvarchar(15),
+    [Fecha_Carga] datetime,
+    [Flag_Activo] int,
+    [ID Cliente] int,
+    [Nombre Cliente] nvarchar(40),
+    [Nombre contacto] nvarchar(30),
+    [Apellido contacto] nvarchar(30),
+    [Cargo contacto] nvarchar(30),
+    [Ventas año anterior] money
+)
+
+/*COMPRAS*/
+CREATE TABLE ODS.MD_COMPRA (
+	IdCompra int identity(1,1) PRIMARY KEY,
+	[ID producto] int not null,
+    [Undades stock] int not null,
+    [Unidades compra] int not null,
+    [Recibido] bit  null,
+    [Pagado] bit  null,
+    [Fecha_Orden] date  null,
+    [Fecha_Espe_Aten] date  null,
+    [Fecha_Carga] datetime not null,
+    [Flag_Activo] int not null,
+	[Fecha_Eliminacion] datetime null
+)
+--TRUNCATE TABLE [ODS].[MD_COMPRA]
+Select * from [STAGE].[SCV_COMPRA]
+Select * from [ODS].[MD_COMPRA]
+--SELECT P.[Nombre producto],C.[Undades stock],C.[Unidades compra],
+--C.[Fecha de orden],C.[Fecha esperada de atencion],C.[Recibido],
+--C.[Pagado]
+--FROM  [STAGE].[SCV_COMPRA] C INNER JOIN [STAGE].[SCV_PRODUCTO] P
+--ON C.[ID producto]=P.[ID producto]
+
+
+
+/*DIMENSION TIEMPO*/
+CREATE TABLE BDS.DIM_TIEMPO (
+    [Date] datetime,
+    [IdFecha] int,
+    [DiaSemana] int,
+    [DiaMes] int,
+    [DiaAño] int,
+    [SemanaAño] int,
+    [MesAño] int,
+    [Cuatrimestre] int,
+    [Año] int,
+    [Semestre] int,
+    [AñoSemana] nvarchar(7),
+    [AñoMes] nvarchar(7),
+    [AñoCuatrimestre] nvarchar(6),
+    [AñoSemestre] nvarchar(6),
+    [DiaIngles] nvarchar(9),
+    [DiaEspañol] nvarchar(9),
+    [MesIngles] nvarchar(9),
+    [MesEspañol] nvarchar(10)
+)
+--TRUNCATE TABLE BDS.DIM_TIEMPO
+SELECT * FROM BDS.DIM_TIEMPO
